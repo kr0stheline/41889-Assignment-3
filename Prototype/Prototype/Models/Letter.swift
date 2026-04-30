@@ -10,5 +10,5 @@ import Foundation
 struct Letter:Identifiable {
     let id = UUID()
     let letterChar: Character
-    let position: CGPoint
+    let index: Int
 }
