@@ -16,15 +16,31 @@ struct GameView: View {
                 Text("Game Screen")
                     .font(.largeTitle)
                     .bold()
-
+                
                 Text("Game logic will be added later.")
                     .multilineTextAlignment(.center)
-
+                
                 Text("Image + scrambled word area")
                     .padding()
                     .background(Color.white)
                     .cornerRadius(16)
+                
+                HStack() {
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 100, height: 100)
+
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 100, height: 100)
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 100, height: 100)
+                    
+                }
             }
+                
+                
             .padding()
         }
         .navigationTitle("Game")
