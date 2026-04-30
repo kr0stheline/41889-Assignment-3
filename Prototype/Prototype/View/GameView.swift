@@ -8,6 +8,7 @@ import SwiftUI
 
 struct GameView: View {
     var body: some View {
+        @StateObject var gameViewModel = GameViewModelModel()
         ZStack {
             Color.yellow.opacity(0.2)
                 .ignoresSafeArea()
@@ -26,17 +27,19 @@ struct GameView: View {
                     .cornerRadius(16)
                 
                 HStack() {
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: 100, height: 100)
-
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: 100, height: 100)
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: 100, height: 100)
                     
+                    ForEach(gameViewModel.letters) { letter in
+                        Rectangle()
+                            .fill(Color.white)
+                            .frame(width: 100, height: 100)
+                            .overlay(
+                                Text(String(letter.letterChar))
+                        )
+                        
+                    }
+                   
+
+
                 }
             }
                 

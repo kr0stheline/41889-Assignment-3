@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ScoreboardView: View {
-<<<<<<< Updated upstream
-=======
-    @ObservedObject var scoreBoard: HighScoreViewModel
->>>>>>> Stashed changes
+
+
+//    @ObservedObject var scoreBoard: HighScoreViewModel
+
     var body: some View {
         ZStack {
             Color.purple.opacity(0.15)
@@ -23,12 +23,12 @@ struct ScoreboardView: View {
                     .bold()
 
                 Text("Scores will be displayed here.")
-<<<<<<< Updated upstream
-=======
+
+
                 List {
                     //ForEach(scores)
                 }
->>>>>>> Stashed changes
+
             }
         }
         .navigationTitle("Scoreboard")
