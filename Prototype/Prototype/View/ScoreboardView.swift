@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ScoreboardView: View {
+    @ObservedObject var scoreBoard: BestScoreViewModel
     var body: some View {
         ZStack {
             Color.purple.opacity(0.15)
@@ -19,6 +20,9 @@ struct ScoreboardView: View {
                     .bold()
 
                 Text("Scores will be displayed here.")
+                List {
+                    ForEach
+                }
             }
         }
         .navigationTitle("Scoreboard")
