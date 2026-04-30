@@ -30,3 +30,7 @@ struct GameView: View {
         .navigationTitle("Game")
     }
 }
+
+#Preview {
+    GameView()
+}
