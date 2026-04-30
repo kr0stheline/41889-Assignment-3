@@ -24,3 +24,7 @@ struct ScoreboardView: View {
         .navigationTitle("Scoreboard")
     }
 }
+
+#Preview {
+    ScoreboardView()
+}
