@@ -87,3 +87,7 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
     }
 }
+
+#Preview {
+    HomeView()
+}
