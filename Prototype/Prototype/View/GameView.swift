@@ -33,8 +33,41 @@ struct GameView: View {
                             .fill(Color.white)
                             .frame(width: 100, height: 100)
                             .overlay(
-                                Text(String(letter.letterChar))
-                        )
+                                Text(String(letter.letterChar)))
+                            
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                     }
                    
