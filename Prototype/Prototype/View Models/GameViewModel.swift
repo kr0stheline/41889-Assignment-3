@@ -22,7 +22,7 @@ class GameViewModelModel: ObservableObject {
     
     func populateLetters() {
         var letterIndex: Int = 0
-        for c in words[0] {
+        for c in words[currentWord] {
             letters.append(Letter(letterChar: c, index: letterIndex))
             letterIndex += 1
         }
@@ -30,6 +30,8 @@ class GameViewModelModel: ObservableObject {
     
     func incrementCurrentWord() {
         currentWord += 1
+        letters.removeAll()
+        populateLetters()
     }
 }
 

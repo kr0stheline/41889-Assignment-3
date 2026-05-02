@@ -7,8 +7,9 @@
 import SwiftUI
 
 struct GameView: View {
+    @StateObject private var gameViewModel = GameViewModelModel()
+    
     var body: some View {
-        @StateObject var gameViewModel = GameViewModelModel()
         ZStack {
             Color.yellow.opacity(0.2)
                 .ignoresSafeArea()
@@ -36,46 +37,11 @@ struct GameView: View {
                                 Text(String(letter.letterChar)))
                             
                         
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
                     }
-                   
 
 
                 }
             }
-                
                 
             .padding()
         }
