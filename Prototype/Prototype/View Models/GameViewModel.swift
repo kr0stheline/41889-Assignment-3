@@ -26,6 +26,7 @@ class GameViewModelModel: ObservableObject {
             letters.append(Letter(letterChar: c, index: letterIndex))
             letterIndex += 1
         }
+        letters.shuffle()
     }
     
     func incrementCurrentWord() {
