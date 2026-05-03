@@ -49,7 +49,7 @@ struct HomeView: View {
                     Spacer().frame(height: geo.size.height * 0.03)
 
                     NavigationLink {
-                        GameView()
+                        SettingView()
                     } label: {
                         Image("startButton")
                             .resizable()
