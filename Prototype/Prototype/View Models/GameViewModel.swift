@@ -16,6 +16,13 @@ class GameViewModelModel: ObservableObject {
     @Published var time: Int = 0
     @Published var currentWord: Int = 0
     
+    @Published var currentAttempt: [Letter?] = []
+    @Published var isCorrect: Bool? = nil
+    
+    var isAttemptComplete: Bool {
+        !currentAttempt.contains(where: { $0 == nil })
+    }
+    
     init() {
         populateLetters()
     }
@@ -27,12 +34,41 @@ class GameViewModelModel: ObservableObject {
             letterIndex += 1
         }
         letters.shuffle()
+        resetAttempt()
     }
     
-    func incrementCurrentWord() {
+    func nextWord() {
+        guard currentWord + 1 < words.count else {
+            //game over - handle later
+            return
+        }
         currentWord += 1
         letters.removeAll()
+        isCorrect = nil
         populateLetters()
+    }
+    
+    func resetAttempt() {
+        currentAttempt = Array(repeating: nil, count: words[currentWord].count)
+    }
+    
+    func tapLetterFromBank(_ letter: Letter) {
+        guard let firstEmpty = currentAttempt.firstIndex(where: { $0 == nil }) else { return }
+        currentAttempt[firstEmpty] = letter
+        letters.removeAll { $0.id == letter.id }
+    }
+    
+    func tapSlot(at index: Int) {
+        guard let letter = currentAttempt[index] else { return }
+        currentAttempt[index] = nil
+        letters.append(letter)
+    }
+    
+    func confirmAttempt() {
+        let attempted = currentAttempt.reduce("") { result, letter in
+            result + (letter.map { String($0.letterChar) } ?? "")
+        }
+        isCorrect = attempted == words[currentWord]
     }
 }
 
