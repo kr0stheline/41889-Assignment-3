@@ -7,7 +7,11 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject private var gameViewModel = GameViewModelModel()
+    @StateObject private var gameViewModel = GameViewModelModel
+    
+    init(topic: String, difficulty: String) {
+        _gameViewModel = StateObject(wrappedValue: GameViewModelModel(topic: topic, difficulty: difficulty))
+    }
     
     var body: some View {
         ZStack {
@@ -95,5 +99,5 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView()
+    //After GameVIew is done it gets more detail GameView()
 }

@@ -11,20 +11,44 @@ import Combine
 
 
 class GameViewModelModel: ObservableObject {
+    
+    private static let wordBank: [String: [String]] = [
+        "Animals": ["CAT", "DOG", "COW", "BIRD", "FISH", "LION", "FROG", "DUCK"],
+        "Fruits": ["APPLE", "GRAPE", "MANGO", "LEMON", "MELON", "PEAR", "KIWI", "PLUM"],
+        "Nature": ["TREE", "ROCK", "RIVER", "CLOUD", "LEAF", "MOON", "SUN", "RAIN"],
+        "Science": ["ATOM", "CELL", "MAGNET", "ENERGY", "PLANET", "METAL", "LIGHT", "FORCE"]
+    ]
+    
     @Published var letters: [Letter] = []
-    @Published var words: [String] = ["CAT", "DOG"]
+    @Published var words: [String] = []
     @Published var time: Int = 0
     @Published var currentWord: Int = 0
     
     @Published var currentAttempt: [Letter?] = []
     @Published var isCorrect: Bool? = nil
     
+    let topic: String
+    let difficulty: String
+    
     var isAttemptComplete: Bool {
         !currentAttempt.contains(where: { $0 == nil })
     }
     
-    init() {
+    init(topic: String, difficulty: String) {
+        self.topic = topic
+        self.difficulty = difficulty
+        self.words = Self.wordBank[topic] ?? ["CAT", "DOG"]
+        self.time = Self.timeFor(difficulty:difficulty)
         populateLetters()
+    }
+    
+    private static func timeFor(difficulty: String) -> Int {
+        switch difficulty {
+        case "Easy": return 45
+        case "Medium": return 30
+        case "Hard": return 15
+        default: return 30
+        }
     }
     
     func populateLetters() {
