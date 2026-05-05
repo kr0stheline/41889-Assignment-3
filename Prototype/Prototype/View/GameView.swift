@@ -41,7 +41,7 @@ struct GameView: View {
                     ForEach(0..<gameViewModel.currentAttempt.count, id: \.self) { slotIndex in
                         Rectangle()
                             .fill(Color.white)
-                            .frame(width: 80, height: 80)
+                            .frame(width: gameViewModel.tileSize, height: gameViewModel.tileSize)
                             .overlay(
                                 Rectangle().stroke(Color.gray, lineWidth: 2)
                             )
@@ -60,7 +60,7 @@ struct GameView: View {
                     ForEach(gameViewModel.letters) { letter in
                         Rectangle()
                             .fill(Color.purple.opacity(0.3))
-                            .frame(width: 80, height: 80)
+                            .frame(width: gameViewModel.tileSize, height: gameViewModel.tileSize)
                             .overlay(
                                 Text(String(letter.letterChar))
                                     .font(.largeTitle)

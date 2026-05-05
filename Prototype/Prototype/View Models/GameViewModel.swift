@@ -38,6 +38,17 @@ class GameViewModel: ObservableObject {
         !currentAttempt.contains(where: { $0 == nil })
     }
     
+    var tileSize: CGFloat {
+        let count = words[currentWord].count
+        switch count {
+        case 0...3: return 80
+        case 4: return 75
+        case 5: return 68
+        case 6: return 60
+        default: return 50
+        }
+    }
+    
     init(topic: String, difficulty: String) {
         self.topic = topic
         self.difficulty = difficulty
