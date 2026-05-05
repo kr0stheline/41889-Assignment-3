@@ -16,7 +16,7 @@ class GameViewModel: ObservableObject {
         "Animals": ["CAT", "DOG", "COW", "BIRD", "FISH", "LION", "FROG", "DUCK"],
         "Fruits": ["APPLE", "GRAPE", "MANGO", "LEMON", "MELON", "PEAR", "KIWI", "PLUM"],
         "Nature": ["TREE", "ROCK", "RIVER", "CLOUD", "LEAF", "MOON", "SUN", "RAIN"],
-        "Science": ["ATOM", "CELL", "MAGNET", "ENERGY", "PLANET", "METAL", "LIGHT", "FORCE"]
+        "Science": ["DNA", "ATOM", "CELL", "MAGNET", "ENERGY", "PLANET", "METAL", "LIGHT"]
     ]
     
     @Published var letters: [Letter] = []
