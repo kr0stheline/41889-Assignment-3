@@ -77,6 +77,7 @@ struct GameView: View {
                 
                 if let isCorrect = gameViewModel.isCorrect {
                     if isCorrect {
+                        
                         Text("Correct!")
                             .font(.title2)
                             .bold()
@@ -97,6 +98,12 @@ struct GameView: View {
             .padding()
         }
         .navigationTitle("Game")
+        .onAppear {
+            gameViewModel.startGame()
+        }
+        .onDisappear {
+            gameViewModel.stopGame()
+        }
     }
 }
 

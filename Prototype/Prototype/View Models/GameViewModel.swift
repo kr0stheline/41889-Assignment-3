@@ -63,6 +63,9 @@ class GameViewModel: ObservableObject {
     }
     
     func startGame() {
+        timer?.invalidate()
+        
+        time = Self.timeFor(difficulty: difficulty)
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in DispatchQueue.main.async {
             self.tick()
         }}
@@ -92,6 +95,7 @@ class GameViewModel: ObservableObject {
         isCorrect = nil
         populateLetters()
         
+        
         startGame()
     }
     
@@ -116,6 +120,10 @@ class GameViewModel: ObservableObject {
             result + (letter.map { String($0.letterChar) } ?? "")
         }
         isCorrect = attempted == words[currentWord]
+        
+        if isCorrect == true {
+            stopGame()
+        }
     }
 }
 
