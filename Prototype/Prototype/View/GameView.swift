@@ -7,10 +7,10 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject private var gameViewModel = GameViewModelModel
+    @StateObject private var gameViewModel = GameViewModel
     
     init(topic: String, difficulty: String) {
-        _gameViewModel = StateObject(wrappedValue: GameViewModelModel(topic: topic, difficulty: difficulty))
+        _gameViewModel = StateObject(wrappedValue: GameViewModel(topic: topic, difficulty: difficulty))
     }
     
     var body: some View {

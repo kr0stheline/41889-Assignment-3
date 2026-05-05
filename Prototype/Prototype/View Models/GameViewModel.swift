@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 
-class GameViewModelModel: ObservableObject {
+class GameViewModel: ObservableObject {
     
     private static let wordBank: [String: [String]] = [
         "Animals": ["CAT", "DOG", "COW", "BIRD", "FISH", "LION", "FROG", "DUCK"],
