@@ -108,6 +108,9 @@ struct GameView: View {
         .onDisappear {
             gameViewModel.stopGame()
         }
+        .navigationDestination(isPresented: $gameViewModel.isGameOver) {
+            ResultView(score: gameViewModel.score)
+        }
     }
 }
 

@@ -27,6 +27,7 @@ class GameViewModel: ObservableObject {
     
     @Published var currentAttempt: [Letter?] = []
     @Published var isCorrect: Bool? = nil
+    @Published var isGameOver: Bool = false
     
     let topic: String
     let difficulty: String
@@ -103,6 +104,10 @@ class GameViewModel: ObservableObject {
     func nextWord() {
         guard currentWord + 1 < words.count else {
             //game over - handle later
+            stopGame()
+            isGameOver = true
+            print(isGameOver)
+            
             return
         }
         currentWord += 1

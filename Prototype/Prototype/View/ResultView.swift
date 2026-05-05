@@ -9,6 +9,12 @@
 import SwiftUI
 
 struct ResultView: View {
+    let score: Double
+    
+    init(score: Double) {
+        self.score = score
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
 
@@ -18,7 +24,7 @@ struct ResultView: View {
             
             VStack {
                 Text("Total Score")
-                Text("12,450")
+                Text("\(Int(score))")
                     .font(.title)
             }
             .padding()
@@ -64,5 +70,5 @@ struct ResultView: View {
 }
 
 #Preview {
-    ResultView()
+    ResultView(score: 500.0)
 }
