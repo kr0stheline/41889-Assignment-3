@@ -30,6 +30,8 @@ class GameViewModel: ObservableObject {
     let topic: String
     let difficulty: String
     
+    private var timer: Timer?
+    
     var isAttemptComplete: Bool {
         !currentAttempt.contains(where: { $0 == nil })
     }
@@ -51,6 +53,25 @@ class GameViewModel: ObservableObject {
         }
     }
     
+    private func tick() {
+        guard time > 0 else {
+            stopGame()
+            return
+        }
+        
+        time -= 1
+    }
+    
+    func startGame() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in DispatchQueue.main.async {
+            self.tick()
+        }}
+    }
+    
+    func stopGame() {
+        timer?.invalidate()
+    }
+    
     func populateLetters() {
         var letterIndex: Int = 0
         for c in words[currentWord] {
@@ -70,6 +91,8 @@ class GameViewModel: ObservableObject {
         letters.removeAll()
         isCorrect = nil
         populateLetters()
+        
+        startGame()
     }
     
     func resetAttempt() {

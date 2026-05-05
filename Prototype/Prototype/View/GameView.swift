@@ -19,17 +19,19 @@ struct GameView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Text("Game Screen")
-                    .font(.largeTitle)
-                    .bold()
+                HStack() {
+                    Text("\(gameViewModel.difficulty)")
+                    
+                    Spacer()
+                    
+                    Text("\(gameViewModel.topic)")
+                    
+                    Spacer()
+                    
+                    Text("\(gameViewModel.time)")
+                    
+                }
                 
-                Text("Game logic will be added later.")
-                    .multilineTextAlignment(.center)
-                
-                Text("Image + scrambled word area")
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(16)
                 
                 HStack() {
                     ForEach(0..<gameViewModel.currentAttempt.count, id: \.self) { slotIndex in
@@ -99,5 +101,5 @@ struct GameView: View {
 }
 
 #Preview {
-    //After GameVIew is done it gets more detail GameView()
+    GameView(topic: "Animals", difficulty: "Easy")
 }
