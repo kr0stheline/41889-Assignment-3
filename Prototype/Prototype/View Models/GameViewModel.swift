@@ -68,6 +68,7 @@ class GameViewModel: ObservableObject {
     private func tick() {
         guard time > 0 else {
             stopGame()
+            nextWord()
             return
         }
         
