@@ -41,11 +41,11 @@ class GameViewModel: ObservableObject {
     var tileSize: CGFloat {
         let count = words[currentWord].count
         switch count {
-        case 0...3: return 80
-        case 4: return 75
-        case 5: return 68
-        case 6: return 60
-        default: return 50
+        case 0...3: return 70
+        case 4: return 60
+        case 5: return 52
+        case 6: return 45
+        default: return 38
         }
     }
     
