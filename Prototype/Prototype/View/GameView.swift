@@ -20,6 +20,10 @@ struct GameView: View {
 
             VStack(spacing: 24) {
                 HStack() {
+                    Text("\(Int(gameViewModel.score))")
+                    
+                    Spacer()
+                    
                     Text("\(gameViewModel.difficulty)")
                     
                     Spacer()

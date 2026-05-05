@@ -23,6 +23,7 @@ class GameViewModel: ObservableObject {
     @Published var words: [String] = []
     @Published var time: Int = 0
     @Published var currentWord: Int = 0
+    @Published var score:Double = 0.0
     
     @Published var currentAttempt: [Letter?] = []
     @Published var isCorrect: Bool? = nil
@@ -60,6 +61,10 @@ class GameViewModel: ObservableObject {
         }
         
         time -= 1
+    }
+    
+    private func incrementScore() {
+        score += 1.5 * Double(time)
     }
     
     func startGame() {
@@ -122,6 +127,8 @@ class GameViewModel: ObservableObject {
         isCorrect = attempted == words[currentWord]
         
         if isCorrect == true {
+            incrementScore()
+            
             stopGame()
         }
     }
