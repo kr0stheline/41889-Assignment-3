@@ -54,6 +54,16 @@ class GameViewModel: ObservableObject {
         }
     }
     
+    private func difficultyModifier() -> Double {
+        switch difficulty {
+        case "Easy": return 1.0
+        case "Medium": return 1.5
+        case "Hard": return 3.0
+        default: return 30
+        }
+    }
+
+    
     private func tick() {
         guard time > 0 else {
             stopGame()
@@ -64,7 +74,7 @@ class GameViewModel: ObservableObject {
     }
     
     private func incrementScore() {
-        score += 1.5 * Double(time)
+        score += 50.5 * Double(Self.timeFor(difficulty: difficulty))/Double(time) * difficultyModifier()
     }
     
     func startGame() {

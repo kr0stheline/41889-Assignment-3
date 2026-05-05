@@ -112,5 +112,5 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(topic: "Animals", difficulty: "Easy")
+    GameView(topic: "Animals", difficulty: "Medium")
 }
