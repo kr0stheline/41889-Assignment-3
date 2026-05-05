@@ -13,6 +13,10 @@ struct SettingView: View {
     
     @State private var selectedTopic: String? = nil
     @State private var selectedDifficulty: String? = nil
+    @State private var isStartingGame: Bool = false
+    private var canStart: Bool {
+        selectedTopic != nil && selectedDifficulty != nil
+    }
     
     var body: some View {
         GeometryReader { geo in
@@ -176,36 +180,18 @@ struct SettingView: View {
                 
                 // MARK: - Start Button
                 Button {
-                    print("Start tapped")
-                    print("Topic:", selectedTopic ?? "None")
-                    print("Difficulty:", selectedDifficulty ?? "None")
+                    isStartingGame = true
                 } label: {
-                    HStack(spacing: w * 0.045) {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: w * 0.085, weight: .bold))
-                        
-                        Text("Start")
-                            .font(.system(
-                                size: w * 0.082,
-                                weight: .heavy,
-                                design: .rounded
-                            ))
-                    }
-                    .foregroundColor(.white)
-                    .frame(width: w * 0.72, height: h * 0.086)
-                    .background(
-                        RoundedRectangle(cornerRadius: 36)
-                            .fill(Color(red: 0.18, green: 0.58, blue: 1.0))
-                    )
-                    .shadow(
-                        color: Color.blue.opacity(0.28),
-                        radius: 0,
-                        x: 0,
-                        y: 8
-                    )
+                    PlayStartButton(width: w, height: h, isEnabled: canStart)
                 }
                 .buttonStyle(.plain)
-                .position(x: w * 0.5, y: h * 0.927)
+                .disabled(!canStart)
+                .position(x: w * 0.5, y: h * 0.92)
+                .navigationDestination(isPresented: $isStartingGame) {
+                    if let topic = selectedTopic, let difficulty = selectedDifficulty {
+                        GameView(topic: topic, difficulty: difficulty)
+                    }
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
