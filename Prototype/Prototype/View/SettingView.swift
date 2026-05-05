@@ -186,7 +186,7 @@ struct SettingView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canStart)
-                .position(x: w * 0.5, y: h * 0.92)
+                .position(x: w * 0.5, y: h * 0.95)
                 .navigationDestination(isPresented: $isStartingGame) {
                     if let topic = selectedTopic, let difficulty = selectedDifficulty {
                         GameView(topic: topic, difficulty: difficulty)
@@ -218,7 +218,7 @@ struct PlayStartButton: View {
                 ))
         }
         .foregroundColor(.white)
-        .frame(width: width * 0.7, height: height * 0.9)
+        .frame(width: width * 0.7, height: height * 0.06)
         .background(
             RoundedRectangle(cornerRadius: 36)
                 .fill(Color(red: 0.18, green: 0.57, blue: 1.0))
