@@ -198,6 +198,40 @@ struct SettingView: View {
     }
 }
 
+//MARK:  - Play Start Button
+
+struct PlayStartButton: View {
+    let width: CGFloat
+    let height: CGFloat
+    let isEnabled: Bool
+    
+    var body: some View {
+        HStack(spacing: width * 0.06) {
+            Image(systemName: "play.fill")
+                .font(.system(size: width * 0.10, weight: .regular))
+            
+            Text("Start")
+                .font(.system(
+                    size: width * 0.08,
+                    weight: .heavy,
+                    design: .rounded
+                ))
+        }
+        .foregroundColor(.white)
+        .frame(width: width * 0.7, height: height * 0.9)
+        .background(
+            RoundedRectangle(cornerRadius: 36)
+                .fill(Color(red: 0.18, green: 0.57, blue: 1.0))
+        )
+        .shadow(
+            color: Color.blue.opacity(0.28),
+            radius: 0,
+            x: 0,
+            y: 8
+        )
+        .opacity(isEnabled ? 1.0 : 0.5)
+    }
+}
 // MARK: - Topic Image Button
 
 struct TopicImageButton: View {
