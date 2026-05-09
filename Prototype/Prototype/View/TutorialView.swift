@@ -22,10 +22,11 @@ struct TutorialView: View {
                 Image("tutorial_guide")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: geometry.size.width * 1.12)
+                    .frame(width: geometry.size.width * 1)
                     .position(
                         x: geometry.size.width / 2,
-                        y: geometry.size.height * 0.48
+                        y: geometry.size.height * 0.46
+                        
                     )
                 
                 // Got it button

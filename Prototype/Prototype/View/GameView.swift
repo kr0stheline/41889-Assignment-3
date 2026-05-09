@@ -17,6 +17,8 @@ struct GameView: View {
     @State private var skippedStages: Set<Int> = []
     @State private var clearedStages: Set<Int> = []
     
+    @State private var gameStartedAt = Date()
+    
     private let totalStages = 8
     
     init(topic: String, difficulty: String) {
@@ -85,7 +87,6 @@ struct GameView: View {
                 clearedStages.insert(currentStage)
                 skippedStages.remove(currentStage)
                 
-                finalTotalTime = gameViewModel.time
                 finalStagesCleared = clearedStages.count
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
@@ -102,8 +103,19 @@ struct GameView: View {
                 }
             }
             
-            finalTotalTime = gameViewModel.time
             finalStagesCleared = clearedStages.count
+        }
+        .onChange(of: gameViewModel.isGameOver) { _, newValue in
+            if newValue == true {
+                let current = currentStage
+                
+                if !clearedStages.contains(current) && !skippedStages.contains(current) {
+                    skippedStages.insert(current)
+                }
+                
+                finalTotalTime = elapsedTotalTime()
+                finalStagesCleared = clearedStages.count
+            }
         }
         .navigationDestination(isPresented: $gameViewModel.isGameOver) {
             ResultView(
@@ -458,7 +470,6 @@ extension GameView {
             skippedStages.insert(currentStage)
             clearedStages.remove(currentStage)
             
-            finalTotalTime = gameViewModel.time
             finalStagesCleared = clearedStages.count
             
             gameViewModel.nextWord()
@@ -537,6 +548,11 @@ extension GameView {
         finalStagesCleared = 0
         skippedStages.removeAll()
         clearedStages.removeAll()
+        gameStartedAt = Date()
+    }
+    
+    private func elapsedTotalTime() -> Int {
+        max(0, Int(Date().timeIntervalSince(gameStartedAt)))
     }
     
     private func stageCircleColor(_ stage: Int) -> Color {
