@@ -22,9 +22,11 @@ struct GameView: View {
     @State private var gameStartedAt = Date()
     @State private var isAdvancingAfterCorrect = false
     
-    private let totalStages = 8
+    private var totalStages: Int {
+        gameViewModel.totalStages
+    }
     
-    init(topic: String, difficulty: String, playerName: String) {
+    init(topic: Topic, difficulty: Difficulty, playerName: String) {
         _gameViewModel = StateObject(wrappedValue: GameViewModel(topic: topic, difficulty: difficulty))
         self.playerName = playerName
     }
@@ -189,7 +191,7 @@ extension GameView {
             
             infoItem(
                 title: "Level",
-                value: gameViewModel.difficulty,
+                value: gameViewModel.difficulty.rawValue,
                 icon: "flag.fill",
                 color: .purple
             )
@@ -198,7 +200,7 @@ extension GameView {
             
             infoItem(
                 title: "Topic",
-                value: gameViewModel.topic,
+                value: gameViewModel.topic.rawValue,
                 icon: topicIconName,
                 color: .green
             )
@@ -617,18 +619,7 @@ extension GameView {
     }
     
     private var topicIconName: String {
-        switch gameViewModel.topic {
-        case "Animals":
-            return "pawprint.fill"
-        case "Fruits":
-            return "apple.logo"
-        case "Nature":
-            return "leaf.fill"
-        case "Science":
-            return "atom"
-        default:
-            return "questionmark.circle.fill"
-        }
+        gameViewModel.topic.iconSystemName
     }
     
     private func letterColor(for char: Character) -> Color {
@@ -651,6 +642,6 @@ extension GameView {
 
 #Preview {
     NavigationStack {
-        GameView(topic: "Animals", difficulty: "Medium", playerName: "Preview")
+        GameView(topic: .animals, difficulty: .medium, playerName: "Preview")
     }
 }

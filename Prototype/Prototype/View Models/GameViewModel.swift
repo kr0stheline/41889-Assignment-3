@@ -11,14 +11,7 @@ import Combine
 
 
 class GameViewModel: ObservableObject {
-    
-    private static let wordBank: [String: [String]] = [
-        "Animals": ["CAT", "DOG", "COW", "BIRD", "FISH", "LION", "FROG", "DUCK"],
-        "Fruits": ["APPLE", "GRAPE", "MANGO", "LEMON", "MELON", "PEAR", "KIWI", "PLUM"],
-        "Nature": ["TREE", "ROCK", "RIVER", "CLOUD", "LEAF", "MOON", "SUN", "RAIN"],
-        "Science": ["DNA", "ATOM", "CELL", "MAGNET", "ENERGY", "PLANET", "METAL", "LIGHT"]
-    ]
-    
+
     @Published var letters: [Letter] = []
     @Published var words: [String] = []
     @Published var time: Int = 0
@@ -29,14 +22,18 @@ class GameViewModel: ObservableObject {
     @Published var isCorrect: Bool? = nil
     @Published var isGameOver: Bool = false
     
-    let topic: String
-    let difficulty: String
+    let topic: Topic
+    let difficulty: Difficulty
     
     private var timer: Timer?
     private var initialBankOrder: [Letter] = []
     
     var isAttemptComplete: Bool {
         !currentAttempt.contains(where: { $0 == nil })
+    }
+
+    var totalStages: Int {
+        words.count
     }
     
     var tileSize: CGFloat {
@@ -50,30 +47,12 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    init(topic: String, difficulty: String) {
+    init(topic: Topic, difficulty: Difficulty) {
         self.topic = topic
         self.difficulty = difficulty
-        self.words = Self.wordBank[topic] ?? ["CAT", "DOG"]
-        self.time = Self.timeFor(difficulty:difficulty)
+        self.words = GameConfig.wordBank[topic] ?? ["CAT", "DOG"]
+        self.time = difficulty.timeLimitSeconds
         populateLetters()
-    }
-    
-    private static func timeFor(difficulty: String) -> Int {
-        switch difficulty {
-        case "Easy": return 45
-        case "Medium": return 30
-        case "Hard": return 15
-        default: return 30
-        }
-    }
-    
-    private func difficultyModifier() -> Double {
-        switch difficulty {
-        case "Easy": return 1.0
-        case "Medium": return 1.5
-        case "Hard": return 3.0
-        default: return 30
-        }
     }
 
     
@@ -88,13 +67,14 @@ class GameViewModel: ObservableObject {
     }
     
     private func incrementScore() {
-        score += 50.5 * Double(Self.timeFor(difficulty: difficulty))/Double(time) * difficultyModifier()
+        let safeTime = max(time, 1)
+        score += 50.5 * Double(difficulty.timeLimitSeconds) / Double(safeTime) * difficulty.scoreMultiplier
     }
     
     func startGame() {
         timer?.invalidate()
         
-        time = Self.timeFor(difficulty: difficulty)
+        time = difficulty.timeLimitSeconds
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in DispatchQueue.main.async {
             self.tick()
         }}

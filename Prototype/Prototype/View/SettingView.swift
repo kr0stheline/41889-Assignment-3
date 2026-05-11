@@ -12,8 +12,8 @@ struct SettingView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(HighScoreViewModel.currentPlayerNameKey) private var playerName = ""
     
-    @State private var selectedTopic: String? = nil
-    @State private var selectedDifficulty: String? = nil
+    @State private var selectedTopic: Topic? = nil
+    @State private var selectedDifficulty: Difficulty? = nil
     @State private var isStartingGame: Bool = false
     private var trimmedPlayerName: String {
         playerName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -98,20 +98,20 @@ struct SettingView: View {
                 // MARK: - Topic Cards Row 1
                 TopicImageButton(
                     imageName: "btnAnimals",
-                    isSelected: selectedTopic == "Animals",
+                    isSelected: selectedTopic == .animals,
                     hasSelection: selectedTopic != nil
                 ) {
-                    selectedTopic = "Animals"
+                    selectedTopic = .animals
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
                     .position(x: w * 0.32, y: h * 0.385)
                 
                 TopicImageButton(
                     imageName: "btnFruits",
-                    isSelected: selectedTopic == "Fruits",
+                    isSelected: selectedTopic == .fruits,
                     hasSelection: selectedTopic != nil
                 ) {
-                    selectedTopic = "Fruits"
+                    selectedTopic = .fruits
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
                     .position(x: w * 0.68, y: h * 0.385)
@@ -119,20 +119,20 @@ struct SettingView: View {
                 // MARK: - Topic Cards Row 2
                 TopicImageButton(
                     imageName: "btnNature",
-                    isSelected: selectedTopic == "Nature",
+                    isSelected: selectedTopic == .nature,
                     hasSelection: selectedTopic != nil
                 ) {
-                    selectedTopic = "Nature"
+                    selectedTopic = .nature
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
                 .position(x: w * 0.32, y: h * 0.56)
                 
                 TopicImageButton(
                     imageName: "btnScience",
-                    isSelected: selectedTopic == "Science",
+                    isSelected: selectedTopic == .science,
                     hasSelection: selectedTopic != nil
                 ) {
-                    selectedTopic = "Science"
+                    selectedTopic = .science
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
                 .position(x: w * 0.68, y: h * 0.56)
@@ -172,30 +172,30 @@ struct SettingView: View {
                 // MARK: - Difficulty Cards
                 DifficultyImageButton(
                     imageName: "btnEasy",
-                    isSelected: selectedDifficulty == "Easy",
+                    isSelected: selectedDifficulty == .easy,
                     hasSelection: selectedDifficulty != nil
                 ) {
-                    selectedDifficulty = "Easy"
+                    selectedDifficulty = .easy
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
                 .position(x: w * 0.265, y: h * 0.835)
                 
                 DifficultyImageButton(
                     imageName: "btnMedium",
-                    isSelected: selectedDifficulty == "Medium",
+                    isSelected: selectedDifficulty == .medium,
                     hasSelection: selectedDifficulty != nil
                 ) {
-                    selectedDifficulty = "Medium"
+                    selectedDifficulty = .medium
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
                 .position(x: w * 0.500, y: h * 0.835)
                 
                 DifficultyImageButton(
                     imageName: "btnHard",
-                    isSelected: selectedDifficulty == "Hard",
+                    isSelected: selectedDifficulty == .hard,
                     hasSelection: selectedDifficulty != nil
                 ) {
-                    selectedDifficulty = "Hard"
+                    selectedDifficulty = .hard
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
                 .position(x: w * 0.735, y: h * 0.835)
