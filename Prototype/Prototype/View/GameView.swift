@@ -10,6 +10,7 @@ import UIKit
 
 struct GameView: View {
     @StateObject private var gameViewModel: GameViewModel
+    private let playerName: String
     
     @State private var finalTotalTime = 0
     @State private var finalStagesCleared = 0
@@ -21,8 +22,9 @@ struct GameView: View {
     
     private let totalStages = 8
     
-    init(topic: String, difficulty: String) {
+    init(topic: String, difficulty: String, playerName: String) {
         _gameViewModel = StateObject(wrappedValue: GameViewModel(topic: topic, difficulty: difficulty))
+        self.playerName = playerName
     }
     
     var body: some View {
@@ -119,6 +121,9 @@ struct GameView: View {
         }
         .navigationDestination(isPresented: $gameViewModel.isGameOver) {
             ResultView(
+                playerName: playerName,
+                topic: gameViewModel.topic,
+                difficulty: gameViewModel.difficulty,
                 score: gameViewModel.score,
                 stagesCleared: finalStagesCleared,
                 totalStages: totalStages,
@@ -625,6 +630,6 @@ extension GameView {
 
 #Preview {
     NavigationStack {
-        GameView(topic: "Animals", difficulty: "Medium")
+        GameView(topic: "Animals", difficulty: "Medium", playerName: "Preview")
     }
 }

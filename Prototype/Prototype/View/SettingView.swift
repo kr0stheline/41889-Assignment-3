@@ -10,12 +10,18 @@ import SwiftUI
 struct SettingView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @AppStorage(HighScoreViewModel.currentPlayerNameKey) private var playerName = ""
     
     @State private var selectedTopic: String? = nil
     @State private var selectedDifficulty: String? = nil
     @State private var isStartingGame: Bool = false
+    private var trimmedPlayerName: String {
+        playerName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
     private var canStart: Bool {
-        selectedTopic != nil && selectedDifficulty != nil
+        !trimmedPlayerName.isEmpty &&
+        selectedTopic != nil &&
+        selectedDifficulty != nil
     }
     
     var body: some View {
@@ -40,12 +46,6 @@ struct SettingView: View {
                 }
                 .position(x: w * 0.105, y: h * 0.070)
                 
-                // MARK: - Gear Button
-                CircleButton(systemName: "gearshape.fill") {
-                    print("Gear tapped")
-                }
-                .position(x: w * 0.895, y: h * 0.070)
-                
                 // MARK: - Title
                 Text("Game Settings")
                     .font(.system(
@@ -55,7 +55,7 @@ struct SettingView: View {
                     ))
                 
                     .foregroundColor(Color(red: 0.31, green: 0.23, blue: 0.17))
-                    .position(x: w * 0.5, y: h * 0.13)
+                    .position(x: w * 0.5, y: h * 0.115)
                 
                 // MARK: - Topic Guide
                 Text("Choose a topic to practice!")
@@ -71,7 +71,29 @@ struct SettingView: View {
                         Capsule()
                             .fill(Color(red: 0.90, green: 0.80, blue: 0.70).opacity(0.92))
                     )
-                    .position(x: w * 0.5, y: h * 0.2)
+                    .position(x: w * 0.5, y: h * 0.165)
+
+                VStack(spacing: 6) {
+                    Text("Player Name")
+                        .font(.system(size: w * 0.038, weight: .heavy, design: .rounded))
+                        .foregroundColor(Color(red: 0.31, green: 0.23, blue: 0.17))
+
+                    TextField("Enter your name", text: $playerName)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled(true)
+                        .padding(.horizontal, 14)
+                        .frame(width: w * 0.62, height: 44)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(Color.white.opacity(0.95))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.orange.opacity(0.25), lineWidth: 1.5)
+                        )
+                }
+                .position(x: w * 0.5, y: h * 0.245)
+                .zIndex(3)
                 
                 // MARK: - Topic Cards Row 1
                 TopicImageButton(
@@ -82,7 +104,7 @@ struct SettingView: View {
                     selectedTopic = "Animals"
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
-                .position(x: w * 0.32, y: h * 0.325)
+                    .position(x: w * 0.32, y: h * 0.385)
                 
                 TopicImageButton(
                     imageName: "btnFruits",
@@ -92,7 +114,7 @@ struct SettingView: View {
                     selectedTopic = "Fruits"
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
-                .position(x: w * 0.68, y: h * 0.325)
+                    .position(x: w * 0.68, y: h * 0.385)
                 
                 // MARK: - Topic Cards Row 2
                 TopicImageButton(
@@ -103,7 +125,7 @@ struct SettingView: View {
                     selectedTopic = "Nature"
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
-                .position(x: w * 0.32, y: h * 0.51)
+                .position(x: w * 0.32, y: h * 0.56)
                 
                 TopicImageButton(
                     imageName: "btnScience",
@@ -113,7 +135,7 @@ struct SettingView: View {
                     selectedTopic = "Science"
                 }
                 .frame(width: w * 0.415, height: h * 0.175)
-                .position(x: w * 0.68, y: h * 0.51)
+                .position(x: w * 0.68, y: h * 0.56)
                 
                 // MARK: - Difficulty Guide
                 Text("After that, choose a difficulty!")
@@ -129,13 +151,13 @@ struct SettingView: View {
                         Capsule()
                             .fill(Color(red: 0.94, green: 0.86, blue: 0.78).opacity(0.94))
                     )
-                    .position(x: w * 0.5, y: h * 0.63)
+                    .position(x: w * 0.5, y: h * 0.675)
                 
                 // MARK: - Difficulty Panel Background
                 RoundedRectangle(cornerRadius: 36)
                     .fill(Color.white.opacity(0.91))
                     .frame(width: w * 0.88, height: h * 0.235)
-                    .position(x: w * 0.5, y: h * 0.782)
+                    .position(x: w * 0.5, y: h * 0.815)
                 
                 // MARK: - Difficulty Title
                 Text("Difficulty")
@@ -145,7 +167,7 @@ struct SettingView: View {
                         design: .rounded
                     ))
                     .foregroundColor(Color(red: 0.31, green: 0.23, blue: 0.17))
-                    .position(x: w * 0.5, y: h * 0.69)
+                    .position(x: w * 0.5, y: h * 0.725)
                 
                 // MARK: - Difficulty Cards
                 DifficultyImageButton(
@@ -156,7 +178,7 @@ struct SettingView: View {
                     selectedDifficulty = "Easy"
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
-                .position(x: w * 0.265, y: h * 0.795)
+                .position(x: w * 0.265, y: h * 0.835)
                 
                 DifficultyImageButton(
                     imageName: "btnMedium",
@@ -166,7 +188,7 @@ struct SettingView: View {
                     selectedDifficulty = "Medium"
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
-                .position(x: w * 0.500, y: h * 0.795)
+                .position(x: w * 0.500, y: h * 0.835)
                 
                 DifficultyImageButton(
                     imageName: "btnHard",
@@ -176,7 +198,7 @@ struct SettingView: View {
                     selectedDifficulty = "Hard"
                 }
                 .frame(width: w * 0.265, height: h * 0.170)
-                .position(x: w * 0.735, y: h * 0.795)
+                .position(x: w * 0.735, y: h * 0.835)
                 
                 // MARK: - Start Button
                 Button {
@@ -186,10 +208,14 @@ struct SettingView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canStart)
-                .position(x: w * 0.5, y: h * 0.95)
+                .position(x: w * 0.5, y: h * 0.965)
                 .navigationDestination(isPresented: $isStartingGame) {
                     if let topic = selectedTopic, let difficulty = selectedDifficulty {
-                        GameView(topic: topic, difficulty: difficulty)
+                        GameView(
+                            topic: topic,
+                            difficulty: difficulty,
+                            playerName: trimmedPlayerName
+                        )
                     }
                 }
             }

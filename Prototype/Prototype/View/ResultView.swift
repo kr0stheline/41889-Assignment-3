@@ -6,6 +6,9 @@
 import SwiftUI
 
 struct ResultView: View {
+    let playerName: String
+    let topic: String
+    let difficulty: String
     let score: Double
     let stagesCleared: Int
     let totalStages: Int
@@ -15,8 +18,12 @@ struct ResultView: View {
     
     @State private var goToSettings = false
     @State private var goToHome = false
+    @State private var didSaveResult = false
     
     init(
+        playerName: String,
+        topic: String,
+        difficulty: String,
         score: Double,
         stagesCleared: Int = 8,
         totalStages: Int = 8,
@@ -24,6 +31,9 @@ struct ResultView: View {
         clearedStages: Set<Int> = [],
         skippedStages: Set<Int> = []
     ) {
+        self.playerName = playerName
+        self.topic = topic
+        self.difficulty = difficulty
         self.score = score
         self.stagesCleared = stagesCleared
         self.totalStages = totalStages
@@ -58,12 +68,28 @@ struct ResultView: View {
             HomeView()
                 .navigationBarBackButtonHidden(true)
         }
+        .onAppear {
+            saveResultIfNeeded()
+        }
     }
 }
 
 // MARK: - Main UI
 
 extension ResultView {
+    
+    private func saveResultIfNeeded() {
+        guard !didSaveResult else { return }
+        didSaveResult = true
+
+        HighScoreViewModel.addScore(
+            playerName: playerName,
+            difficulty: difficulty,
+            correctCount: stagesCleared,
+            score: Int(score),
+            topic: topic
+        )
+    }
     
     private var backgroundView: some View {
         ZStack {
@@ -565,6 +591,9 @@ extension ResultView {
 #Preview {
     NavigationStack {
         ResultView(
+            playerName: "Preview",
+            topic: "Animals",
+            difficulty: "Medium",
             score: 780,
             stagesCleared: 4,
             totalStages: 8,
