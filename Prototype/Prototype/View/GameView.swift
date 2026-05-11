@@ -20,6 +20,7 @@ struct GameView: View {
     @State private var clearedStages: Set<Int> = []
     
     @State private var gameStartedAt = Date()
+    @State private var isAdvancingAfterCorrect = false
     
     private let totalStages = 8
     
@@ -87,6 +88,7 @@ struct GameView: View {
         }
         .onChange(of: gameViewModel.isCorrect) { _, newValue in
             if newValue == true {
+                isAdvancingAfterCorrect = true
                 clearedStages.insert(currentStage)
                 skippedStages.remove(currentStage)
                 
@@ -95,6 +97,8 @@ struct GameView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                     gameViewModel.nextWord()
                 }
+            } else if newValue == nil {
+                isAdvancingAfterCorrect = false
             }
         }
         .onChange(of: gameViewModel.currentWord) { oldValue, newValue in
@@ -424,18 +428,22 @@ extension GameView {
     }
     
     private func bottomActionButtons(width: CGFloat) -> some View {
-        HStack(spacing: 14) {
+        let safeContainerWidth = width.isFinite ? max(0, width) : 0
+        let safeCheckButtonWidth = max(120, width - 80)
+        
+        return HStack(spacing: 14) {
             checkButton
-                .frame(width: width - 80)
+                .frame(width: safeCheckButtonWidth)
             
             skipButton
                 .frame(width: 62, height: 62)
         }
-        .frame(width: width, alignment: .center)
+        .frame(width: safeContainerWidth, alignment: .center)
     }
     
     private var checkButton: some View {
         Button {
+            guard !isAdvancingAfterCorrect else { return }
             gameViewModel.confirmAttempt()
         } label: {
             HStack(spacing: 10) {
@@ -468,11 +476,14 @@ extension GameView {
                 y: 5
             )
         }
-        .disabled(!gameViewModel.isAttemptComplete)
+        .disabled(!gameViewModel.isAttemptComplete || isAdvancingAfterCorrect)
+        .opacity((!gameViewModel.isAttemptComplete || isAdvancingAfterCorrect) ? 0.7 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isAdvancingAfterCorrect)
     }
     
     private var skipButton: some View {
         Button {
+            guard !isAdvancingAfterCorrect else { return }
             skippedStages.insert(currentStage)
             clearedStages.remove(currentStage)
             
@@ -494,6 +505,10 @@ extension GameView {
                         .stroke(Color.white.opacity(0.85), lineWidth: 2)
                 )
         }
+        .disabled(isAdvancingAfterCorrect)
+        .opacity(isAdvancingAfterCorrect ? 0.45 : 1.0)
+        .scaleEffect(isAdvancingAfterCorrect ? 0.96 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isAdvancingAfterCorrect)
     }
     
     private var resultMessage: some View {
@@ -583,7 +598,12 @@ extension GameView {
         let answerTileSize = (contentWidth - CGFloat(answerCount - 1) * answerSpacing) / CGFloat(answerCount)
         let letterTileSize = (contentWidth - CGFloat(letterCount - 1) * letterSpacing - 40) / CGFloat(letterCount)
         
-        return min(answerTileSize, letterTileSize)
+        let rawSize = min(answerTileSize, letterTileSize)
+        if !rawSize.isFinite {
+            return 30
+        }
+
+        return max(30, rawSize)
     }
     
     private var currentWordImageName: String {
