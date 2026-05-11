@@ -90,19 +90,19 @@ struct GameView: View {
         .onDisappear {
             gameViewModel.stopGame()
         }
-        .onChange(of: gameViewModel.isCorrect) { _, newValue in
-            if newValue == true {
+        .onChange(of: gameViewModel.guessFeedback) { _, newValue in
+            if newValue == .correct {
                 isAdvancingAfterCorrect = true
                 clearedStages.insert(currentStage)
                 skippedStages.remove(currentStage)
                 let wordIndexAtConfirmation = gameViewModel.currentWord
-                
+
                 finalStagesCleared = clearedStages.count
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                     gameViewModel.nextWord(from: wordIndexAtConfirmation)
                 }
-            } else if newValue == nil {
+            } else if newValue == .none {
                 isAdvancingAfterCorrect = false
             }
         }
@@ -519,41 +519,40 @@ extension GameView {
     
     private var resultMessage: some View {
         Group {
-            if let isCorrect = gameViewModel.isCorrect {
-                if isCorrect {
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 16, weight: .bold))
-                        
-                        Text("Correct!")
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 7)
-                    .background(
-                        Capsule()
-                            .fill(Color.green)
-                            .shadow(color: .green.opacity(0.25), radius: 5, x: 0, y: 3)
-                    )
-                } else {
-                    HStack(spacing: 8) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 16, weight: .bold))
-                        
-                        Text("Try again")
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 7)
-                    .background(
-                        Capsule()
-                            .fill(Color.red.opacity(0.92))
-                            .shadow(color: .red.opacity(0.24), radius: 5, x: 0, y: 3)
-                    )
+            switch gameViewModel.guessFeedback {
+            case .correct:
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 16, weight: .bold))
+
+                    Text("Correct!")
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
                 }
-            } else {
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 7)
+                .background(
+                    Capsule()
+                        .fill(Color.green)
+                        .shadow(color: .green.opacity(0.25), radius: 5, x: 0, y: 3)
+                )
+            case .incorrect:
+                HStack(spacing: 8) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 16, weight: .bold))
+
+                    Text("Try again")
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 7)
+                .background(
+                    Capsule()
+                        .fill(Color.red.opacity(0.92))
+                        .shadow(color: .red.opacity(0.24), radius: 5, x: 0, y: 3)
+                )
+            case .none:
                 Text("")
                     .padding(.vertical, 7)
             }

@@ -19,7 +19,7 @@ class GameViewModel: ObservableObject {
     @Published var score:Double = 0.0
     
     @Published var currentAttempt: [Letter?] = []
-    @Published var isCorrect: Bool? = nil
+    @Published var guessFeedback: GuessFeedback = .none
     @Published var isGameOver: Bool = false
     
     let topic: Topic
@@ -115,7 +115,7 @@ class GameViewModel: ObservableObject {
         }
         currentWord += 1
         letters.removeAll()
-        isCorrect = nil
+        guessFeedback = .none
         populateLetters()
         time = difficulty.timeLimitSeconds
         
@@ -142,16 +142,17 @@ class GameViewModel: ObservableObject {
     func confirmAttempt() {
         guard isAttemptComplete else { return }
 
-        if isCorrect == true {
+        if guessFeedback == .correct {
             return
         }
 
         let attempted = currentAttempt.reduce("") { result, letter in
             result + (letter.map { String($0.letterChar) } ?? "")
         }
-        isCorrect = attempted == words[currentWord]
-        
-        if isCorrect == true {
+        let matches = attempted == words[currentWord]
+        guessFeedback = matches ? .correct : .incorrect
+
+        if matches {
             incrementScore()
             
             stopGame()

@@ -50,7 +50,7 @@ struct PrototypeTests {
 
         viewModel.confirmAttempt()
 
-        #expect(viewModel.isCorrect == true)
+        #expect(viewModel.guessFeedback == .correct)
         #expect(viewModel.score > 0)
     }
 
