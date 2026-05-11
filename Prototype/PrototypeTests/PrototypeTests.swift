@@ -6,7 +6,20 @@
 //
 
 import Testing
+import Foundation
 @testable import Prototype
+
+private final class SharedInMemoryScoreStorage: ScoreStorage {
+    var scores: [GameResult] = []
+
+    func loadScores() throws -> [GameResult] {
+        scores
+    }
+
+    func saveScores(_ scores: [GameResult]) throws {
+        self.scores = scores
+    }
+}
 
 struct PrototypeTests {
 
@@ -39,6 +52,63 @@ struct PrototypeTests {
 
         #expect(viewModel.isCorrect == true)
         #expect(viewModel.score > 0)
+    }
+
+    @Test func nextWordIgnoresStaleExpectedIndex() async throws {
+        let viewModel = GameViewModel(topic: .animals, difficulty: .easy)
+        let originalWord = viewModel.currentWord
+
+        viewModel.nextWord(from: originalWord)
+        viewModel.nextWord(from: originalWord)
+
+        #expect(viewModel.currentWord == originalWord + 1)
+    }
+
+    @Test func confirmAttemptDoesNotDoubleIncrementScore() async throws {
+        let viewModel = GameViewModel(topic: .animals, difficulty: .easy)
+        let targetWord = viewModel.words[viewModel.currentWord]
+
+        for character in targetWord {
+            guard let nextLetter = viewModel.letters.first(where: { $0.letterChar == character }) else {
+                Issue.record("Expected letter \(character) in bank")
+                return
+            }
+            viewModel.tapLetterFromBank(nextLetter)
+        }
+
+        viewModel.confirmAttempt()
+        let firstScore = viewModel.score
+        viewModel.confirmAttempt()
+
+        #expect(viewModel.score == firstScore)
+    }
+
+    @Test func addScoreIsIdempotentForSameResultID() async throws {
+        let storage = SharedInMemoryScoreStorage()
+        let sameResultID = UUID()
+
+        HighScoreViewModel.addScore(
+            resultID: sameResultID,
+            playerName: "Kris",
+            difficulty: .medium,
+            correctCount: 4,
+            score: 100,
+            topic: .animals,
+            storage: storage
+        )
+
+        HighScoreViewModel.addScore(
+            resultID: sameResultID,
+            playerName: "Kris",
+            difficulty: .medium,
+            correctCount: 4,
+            score: 100,
+            topic: .animals,
+            storage: storage
+        )
+
+        let scores = HighScoreViewModel.loadStoredScores(storage: storage)
+        #expect(scores.count == 1)
     }
 
 }
