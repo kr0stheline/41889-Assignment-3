@@ -37,7 +37,7 @@ struct GameView: View {
             let contentWidth = min(screenWidth * 0.86, 345)
             let imageSize = min(contentWidth, screenHeight * 0.255)
             let tileSize = min(54, calculateTileSize(contentWidth: contentWidth))
-            let topSpace = max(42, geo.safeAreaInsets.top + 18)
+            let topSpace = max(64, geo.safeAreaInsets.top + 34)
             
             ZStack {
                 backgroundView(width: screenWidth, height: screenHeight)
