@@ -7,8 +7,8 @@ import SwiftUI
 
 struct ResultView: View {
     let playerName: String
-    let topic: String
-    let difficulty: String
+    let topic: Topic
+    let difficulty: Difficulty
     let score: Double
     let stagesCleared: Int
     let totalStages: Int
@@ -22,8 +22,8 @@ struct ResultView: View {
     
     init(
         playerName: String,
-        topic: String,
-        difficulty: String,
+        topic: Topic,
+        difficulty: Difficulty,
         score: Double,
         stagesCleared: Int = 8,
         totalStages: Int = 8,
@@ -592,8 +592,8 @@ extension ResultView {
     NavigationStack {
         ResultView(
             playerName: "Preview",
-            topic: "Animals",
-            difficulty: "Medium",
+            topic: .animals,
+            difficulty: .medium,
             score: 780,
             stagesCleared: 4,
             totalStages: 8,

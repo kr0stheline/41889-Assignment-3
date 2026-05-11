@@ -7,16 +7,77 @@
 import Foundation
 import Combine
 
+enum HighScoreStorageError: LocalizedError {
+    case failedToDecode
+    case failedToEncode
+
+    var errorDescription: String? {
+        switch self {
+        case .failedToDecode:
+            return "Could not read saved scores."
+        case .failedToEncode:
+            return "Could not save scores."
+        }
+    }
+}
+
+protocol ScoreStorage {
+    func loadScores() throws -> [GameResult]
+    func saveScores(_ scores: [GameResult]) throws
+}
+
+struct UserDefaultsScoreStorage: ScoreStorage {
+    let userDefaults: UserDefaults
+    let scoresKey: String
+
+    init(
+        userDefaults: UserDefaults = .standard,
+        scoresKey: String = HighScoreViewModel.scoresKey
+    ) {
+        self.userDefaults = userDefaults
+        self.scoresKey = scoresKey
+    }
+
+    func loadScores() throws -> [GameResult] {
+        guard let data = userDefaults.data(forKey: scoresKey) else {
+            return []
+        }
+
+        guard let decoded = try? JSONDecoder().decode([GameResult].self, from: data) else {
+            throw HighScoreStorageError.failedToDecode
+        }
+
+        return decoded.sorted { $0.score > $1.score }
+    }
+
+    func saveScores(_ scores: [GameResult]) throws {
+        guard let data = try? JSONEncoder().encode(scores) else {
+            throw HighScoreStorageError.failedToEncode
+        }
+        userDefaults.set(data, forKey: scoresKey)
+    }
+}
+
 struct GameResult: Codable, Identifiable, Equatable {
     let id: UUID
     let playerName: String
-    let difficulty: String
+    let difficulty: Difficulty
     let correctCount: Int
     let score: Int
-    let topic: String
+    let topic: Topic
     let date: Date
-    
-    init(playerName: String, difficulty: String, correctCount: Int, score: Int, topic: String) {
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case playerName
+        case difficulty
+        case correctCount
+        case score
+        case topic
+        case date
+    }
+
+    init(playerName: String, difficulty: Difficulty, correctCount: Int, score: Int, topic: Topic) {
         self.id = UUID()
         self.playerName = playerName
         self.difficulty = difficulty
@@ -25,6 +86,40 @@ struct GameResult: Codable, Identifiable, Equatable {
         self.topic = topic
         self.date = Date()
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        playerName = try container.decode(String.self, forKey: .playerName)
+        correctCount = try container.decode(Int.self, forKey: .correctCount)
+        score = try container.decode(Int.self, forKey: .score)
+        date = (try? container.decode(Date.self, forKey: .date)) ?? Date()
+
+        if let topicValue = try? container.decode(Topic.self, forKey: .topic) {
+            topic = topicValue
+        } else {
+            let topicString = (try? container.decode(String.self, forKey: .topic)) ?? Topic.animals.rawValue
+            topic = Topic(rawValue: topicString) ?? .animals
+        }
+
+        if let difficultyValue = try? container.decode(Difficulty.self, forKey: .difficulty) {
+            difficulty = difficultyValue
+        } else {
+            let difficultyString = (try? container.decode(String.self, forKey: .difficulty)) ?? Difficulty.medium.rawValue
+            difficulty = Difficulty(rawValue: difficultyString) ?? .medium
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(playerName, forKey: .playerName)
+        try container.encode(difficulty, forKey: .difficulty)
+        try container.encode(correctCount, forKey: .correctCount)
+        try container.encode(score, forKey: .score)
+        try container.encode(topic, forKey: .topic)
+        try container.encode(date, forKey: .date)
+    }
 }
                         
 class HighScoreViewModel: ObservableObject {
@@ -32,8 +127,12 @@ class HighScoreViewModel: ObservableObject {
     static let currentPlayerNameKey = "WordScrambleCurrentPlayerName"
     
     @Published private(set) var scores: [GameResult] = []
-    
-    init() {
+    @Published private(set) var storageErrorMessage: String?
+
+    private let storage: ScoreStorage
+
+    init(storage: ScoreStorage = UserDefaultsScoreStorage()) {
+        self.storage = storage
         load()
     }
     
@@ -48,35 +147,47 @@ class HighScoreViewModel: ObservableObject {
     }
     
     private func save() {
-        Self.saveStoredScores(scores)
+        do {
+            try storage.saveScores(scores)
+            storageErrorMessage = nil
+        } catch {
+            storageErrorMessage = error.localizedDescription
+        }
     }
     
     private func load() {
-        scores = Self.loadStoredScores()
+        do {
+            scores = try storage.loadScores()
+            storageErrorMessage = nil
+        } catch {
+            scores = []
+            storageErrorMessage = error.localizedDescription
+        }
     }
 
-    static func loadStoredScores() -> [GameResult] {
-        guard let data = UserDefaults.standard.data(forKey: Self.scoresKey),
-              let decoded = try? JSONDecoder().decode([GameResult].self, from: data) else { return [] }
-        return decoded.sorted { $0.score > $1.score }
+    static func loadStoredScores(storage: ScoreStorage = UserDefaultsScoreStorage()) -> [GameResult] {
+        (try? storage.loadScores()) ?? []
     }
 
-    static func saveStoredScores(_ scores: [GameResult]) {
-        guard let data = try? JSONEncoder().encode(scores) else { return }
-        UserDefaults.standard.set(data, forKey: Self.scoresKey)
+    static func saveStoredScores(
+        _ scores: [GameResult],
+        storage: ScoreStorage = UserDefaultsScoreStorage()
+    ) {
+        try? storage.saveScores(scores)
     }
 
     static func addScore(
         playerName: String,
-        difficulty: String,
+        difficulty: Difficulty,
         correctCount: Int,
         score: Int,
-        topic: String
+        topic: Topic,
+        storage: ScoreStorage = UserDefaultsScoreStorage()
     ) {
         let trimmedName = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
         let safeName = trimmedName.isEmpty ? "Player" : trimmedName
 
-        var existingScores = loadStoredScores()
+        var existingScores = loadStoredScores(storage: storage)
         let result = GameResult(
             playerName: safeName,
             difficulty: difficulty,
@@ -87,6 +198,6 @@ class HighScoreViewModel: ObservableObject {
 
         existingScores.append(result)
         existingScores.sort { $0.score > $1.score }
-        saveStoredScores(existingScores)
+        saveStoredScores(existingScores, storage: storage)
     }
 }

@@ -37,6 +37,22 @@ struct ScoreboardView: View {
                 leaderboardRows(geo: geo)
                 
                 bottomSummary(geo: geo)
+
+                if let errorMessage = scoreBoard.storageErrorMessage {
+                    Text(errorMessage)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(Color.white.opacity(0.9))
+                        )
+                        .position(
+                            x: geo.size.width * 0.5,
+                            y: geo.size.height * 0.94
+                        )
+                }
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
