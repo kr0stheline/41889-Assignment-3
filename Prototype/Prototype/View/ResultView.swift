@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct ResultView: View {
+    let gameSessionID: UUID
     let playerName: String
     let topic: Topic
     let difficulty: Difficulty
@@ -21,6 +22,7 @@ struct ResultView: View {
     @State private var didSaveResult = false
     
     init(
+        gameSessionID: UUID = UUID(),
         playerName: String,
         topic: Topic,
         difficulty: Difficulty,
@@ -31,6 +33,7 @@ struct ResultView: View {
         clearedStages: Set<Int> = [],
         skippedStages: Set<Int> = []
     ) {
+        self.gameSessionID = gameSessionID
         self.playerName = playerName
         self.topic = topic
         self.difficulty = difficulty
@@ -83,6 +86,7 @@ extension ResultView {
         didSaveResult = true
 
         HighScoreViewModel.addScore(
+            resultID: gameSessionID,
             playerName: playerName,
             difficulty: difficulty,
             correctCount: stagesCleared,

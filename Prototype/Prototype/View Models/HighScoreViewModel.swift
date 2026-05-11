@@ -77,14 +77,22 @@ struct GameResult: Codable, Identifiable, Equatable {
         case date
     }
 
-    init(playerName: String, difficulty: Difficulty, correctCount: Int, score: Int, topic: Topic) {
-        self.id = UUID()
+    init(
+        id: UUID = UUID(),
+        playerName: String,
+        difficulty: Difficulty,
+        correctCount: Int,
+        score: Int,
+        topic: Topic,
+        date: Date = Date()
+    ) {
+        self.id = id
         self.playerName = playerName
         self.difficulty = difficulty
         self.correctCount = correctCount
         self.score = score
         self.topic = topic
-        self.date = Date()
+        self.date = date
     }
 
     init(from decoder: Decoder) throws {
@@ -137,6 +145,7 @@ class HighScoreViewModel: ObservableObject {
     }
     
     func addScore(_ result: GameResult) {
+        guard !scores.contains(where: { $0.id == result.id }) else { return }
         scores.append(result)
         scores.sort { $0.score > $1.score }
         save()
@@ -177,6 +186,7 @@ class HighScoreViewModel: ObservableObject {
     }
 
     static func addScore(
+        resultID: UUID = UUID(),
         playerName: String,
         difficulty: Difficulty,
         correctCount: Int,
@@ -188,7 +198,9 @@ class HighScoreViewModel: ObservableObject {
         let safeName = trimmedName.isEmpty ? "Player" : trimmedName
 
         var existingScores = loadStoredScores(storage: storage)
+        guard !existingScores.contains(where: { $0.id == resultID }) else { return }
         let result = GameResult(
+            id: resultID,
             playerName: safeName,
             difficulty: difficulty,
             correctCount: correctCount,
