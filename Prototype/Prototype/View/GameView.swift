@@ -21,7 +21,9 @@ struct GameView: View {
     
     @State private var gameStartedAt = Date()
     @State private var isAdvancingAfterCorrect = false
-    
+    // new id each time you start a run — same id gets passed to results so the score save doesnt double up
+    @State private var gameSessionID = UUID()
+
     private var totalStages: Int {
         gameViewModel.totalStages
     }
@@ -129,6 +131,7 @@ struct GameView: View {
         }
         .navigationDestination(isPresented: $gameViewModel.isGameOver) {
             ResultView(
+                gameSessionID: gameSessionID,
                 playerName: playerName,
                 topic: gameViewModel.topic,
                 difficulty: gameViewModel.difficulty,
@@ -568,6 +571,7 @@ extension GameView {
     }
     
     private func resetStageTracking() {
+        gameSessionID = UUID()
         finalTotalTime = 0
         finalStagesCleared = 0
         skippedStages.removeAll()
