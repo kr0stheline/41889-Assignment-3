@@ -7,6 +7,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @StateObject private var highScoreViewModel = HighScoreViewModel()
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -61,7 +64,7 @@ struct HomeView: View {
 
                     HStack(spacing: geo.size.width * 0.08) {
                         NavigationLink {
-                            ScoreboardView()
+                            ScoreboardView(scoreBoard: highScoreViewModel)
                         } label: {
                             Image("scoreboardButton")
                                 .resizable()
