@@ -93,11 +93,12 @@ struct GameView: View {
                 isAdvancingAfterCorrect = true
                 clearedStages.insert(currentStage)
                 skippedStages.remove(currentStage)
+                let wordIndexAtConfirmation = gameViewModel.currentWord
                 
                 finalStagesCleared = clearedStages.count
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                    gameViewModel.nextWord()
+                    gameViewModel.nextWord(from: wordIndexAtConfirmation)
                 }
             } else if newValue == nil {
                 isAdvancingAfterCorrect = false

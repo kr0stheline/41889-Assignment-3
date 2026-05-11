@@ -72,9 +72,13 @@ class GameViewModel: ObservableObject {
     }
     
     func startGame() {
+        guard !isGameOver else { return }
+        guard timer == nil else { return }
         timer?.invalidate()
         
-        time = difficulty.timeLimitSeconds
+        if time <= 0 {
+            time = difficulty.timeLimitSeconds
+        }
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in DispatchQueue.main.async {
             self.tick()
         }}
@@ -97,7 +101,12 @@ class GameViewModel: ObservableObject {
         resetAttempt()
     }
     
-    func nextWord() {
+    func nextWord(from expectedWordIndex: Int? = nil) {
+        if let expectedWordIndex, expectedWordIndex != currentWord {
+            return
+        }
+
+        guard !isGameOver else { return }
         guard currentWord + 1 < words.count else {
             //game over - handle later
             stopGame()
@@ -110,6 +119,7 @@ class GameViewModel: ObservableObject {
         letters.removeAll()
         isCorrect = nil
         populateLetters()
+        time = difficulty.timeLimitSeconds
         
         
         startGame()
@@ -132,6 +142,12 @@ class GameViewModel: ObservableObject {
     }
     
     func confirmAttempt() {
+        guard isAttemptComplete else { return }
+
+        if isCorrect == true {
+            return
+        }
+
         let attempted = currentAttempt.reduce("") { result, letter in
             result + (letter.map { String($0.letterChar) } ?? "")
         }
