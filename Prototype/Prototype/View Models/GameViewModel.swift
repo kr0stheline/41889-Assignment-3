@@ -33,6 +33,7 @@ class GameViewModel: ObservableObject {
     let difficulty: String
     
     private var timer: Timer?
+    private var initialBankOrder: [Letter] = []
     
     var isAttemptComplete: Bool {
         !currentAttempt.contains(where: { $0 == nil })
@@ -104,12 +105,15 @@ class GameViewModel: ObservableObject {
     }
     
     func populateLetters() {
+        var builtLetters: [Letter] = []
         var letterIndex: Int = 0
         for c in words[currentWord] {
-            letters.append(Letter(letterChar: c, index: letterIndex))
+            builtLetters.append(Letter(letterChar: c, index: letterIndex))
             letterIndex += 1
         }
+        letters = builtLetters
         letters.shuffle()
+        initialBankOrder = letters
         resetAttempt()
     }
     
@@ -157,6 +161,10 @@ class GameViewModel: ObservableObject {
             incrementScore()
             
             stopGame()
+        } else {
+            // On wrong answer, restore bank and clear all slots automatically.
+            letters = initialBankOrder
+            resetAttempt()
         }
     }
 }
