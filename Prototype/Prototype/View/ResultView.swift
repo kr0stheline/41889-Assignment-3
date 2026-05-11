@@ -20,7 +20,8 @@ struct ResultView: View {
     @State private var goToSettings = false
     @State private var goToHome = false
     @State private var didSaveResult = false
-    
+    @State private var saveErrorMessage: String?
+
     init(
         gameSessionID: UUID = UUID(),
         playerName: String,
@@ -53,7 +54,18 @@ struct ResultView: View {
                 VStack(spacing: 0) {
                     Spacer()
                         .frame(height: geo.safeAreaInsets.top + 16)
-                    
+
+                    if let saveErrorMessage {
+                        Text(saveErrorMessage)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(10)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.95)))
+                            .padding(.bottom, 8)
+                    }
+
                     resultPanel
                     
                     Spacer(minLength: 12)
@@ -83,16 +95,20 @@ extension ResultView {
     
     private func saveResultIfNeeded() {
         guard !didSaveResult else { return }
-        didSaveResult = true
-
-        HighScoreViewModel.addScore(
-            resultID: gameSessionID,
-            playerName: playerName,
-            difficulty: difficulty,
-            correctCount: stagesCleared,
-            score: Int(score),
-            topic: topic
-        )
+        do {
+            try HighScoreViewModel.addScore(
+                resultID: gameSessionID,
+                playerName: playerName,
+                difficulty: difficulty,
+                correctCount: stagesCleared,
+                score: Int(score),
+                topic: topic
+            )
+            didSaveResult = true
+            saveErrorMessage = nil
+        } catch {
+            saveErrorMessage = error.localizedDescription
+        }
     }
     
     private var backgroundView: some View {

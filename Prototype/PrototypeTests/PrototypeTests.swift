@@ -87,7 +87,7 @@ struct PrototypeTests {
         let storage = SharedInMemoryScoreStorage()
         let sameResultID = UUID()
 
-        HighScoreViewModel.addScore(
+        try HighScoreViewModel.addScore(
             resultID: sameResultID,
             playerName: "Kris",
             difficulty: .medium,
@@ -97,7 +97,7 @@ struct PrototypeTests {
             storage: storage
         )
 
-        HighScoreViewModel.addScore(
+        try HighScoreViewModel.addScore(
             resultID: sameResultID,
             playerName: "Kris",
             difficulty: .medium,

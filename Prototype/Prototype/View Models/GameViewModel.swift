@@ -108,11 +108,9 @@ class GameViewModel: ObservableObject {
 
         guard !isGameOver else { return }
         guard currentWord + 1 < words.count else {
-            //game over - handle later
+            // no more words — stop timer and flip the flag
             stopGame()
             isGameOver = true
-            print(isGameOver)
-            
             return
         }
         currentWord += 1

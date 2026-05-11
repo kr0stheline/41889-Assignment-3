@@ -145,10 +145,13 @@ class HighScoreViewModel: ObservableObject {
     }
     
     func addScore(_ result: GameResult) {
-        guard !scores.contains(where: { $0.id == result.id }) else { return }
-        scores.append(result)
-        scores.sort { $0.score > $1.score }
-        save()
+        do {
+            try GameResultPersistence.saveNewResult(result, storage: storage)
+            scores = try storage.loadScores()
+            storageErrorMessage = nil
+        } catch {
+            storageErrorMessage = error.localizedDescription
+        }
     }
     
     var topScore: Int? {
@@ -181,10 +184,11 @@ class HighScoreViewModel: ObservableObject {
     static func saveStoredScores(
         _ scores: [GameResult],
         storage: ScoreStorage = UserDefaultsScoreStorage()
-    ) {
-        try? storage.saveScores(scores)
+    ) throws {
+        try storage.saveScores(scores)
     }
 
+    /// handy for tests / result screen — throws if encoding fails etc
     static func addScore(
         resultID: UUID = UUID(),
         playerName: String,
@@ -193,12 +197,10 @@ class HighScoreViewModel: ObservableObject {
         score: Int,
         topic: Topic,
         storage: ScoreStorage = UserDefaultsScoreStorage()
-    ) {
+    ) throws {
         let trimmedName = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
         let safeName = trimmedName.isEmpty ? "Player" : trimmedName
 
-        var existingScores = loadStoredScores(storage: storage)
-        guard !existingScores.contains(where: { $0.id == resultID }) else { return }
         let result = GameResult(
             id: resultID,
             playerName: safeName,
@@ -208,8 +210,6 @@ class HighScoreViewModel: ObservableObject {
             topic: topic
         )
 
-        existingScores.append(result)
-        existingScores.sort { $0.score > $1.score }
-        saveStoredScores(existingScores, storage: storage)
+        try GameResultPersistence.saveNewResult(result, storage: storage)
     }
 }
