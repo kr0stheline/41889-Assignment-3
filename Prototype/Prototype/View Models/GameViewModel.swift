@@ -74,18 +74,21 @@ class GameViewModel: ObservableObject {
     func startGame() {
         guard !isGameOver else { return }
         guard timer == nil else { return }
-        timer?.invalidate()
         
         if time <= 0 {
             time = difficulty.timeLimitSeconds
         }
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in DispatchQueue.main.async {
-            self.tick()
-        }}
+        // Use .common so the timer keeps firing during scroll gestures; fire on main without extra hop.
+        let t = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
+            self?.tick()
+        }
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
     }
     
     func stopGame() {
         timer?.invalidate()
+        timer = nil
     }
     
     func populateLetters() {
